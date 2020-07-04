@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">AndroidCert103</string>
+
+    <string name="service_electricity">electricidad</string>
+    <string name="service_internet">Internet</string>
+
+    <string name="format_content">
+        Tu servicio de %1$s vence el día %2$s
+    </string>
+    <string name="format_content_details">
+        Tu servicio de %1$s vence el día %2$s.\n
+        Recuerda que los pagos deben ser realizados antes de la fecha de vencimiento para evitar
+        cualquier suspención del servicio.\n¡Paga hoy para que no lo olvides!
+    </string>
+
+</resources>
