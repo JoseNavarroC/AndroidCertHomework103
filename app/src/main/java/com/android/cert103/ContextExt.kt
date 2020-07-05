@@ -19,13 +19,22 @@ fun Context.createHomeworkNotification(
     contentBig: String
 ): Boolean {
 
-    val intent = Intent(this, DetailsActivity::class.java).apply {
+    val activityIntent = Intent(this, DetailsActivity::class.java).apply {
         flags = Intent.FLAG_ACTIVITY_NEW_TASK
         putExtra(DetailsActivity.EXTRA_DATA, contentBig)
     }
-    val pendingIntent = PendingIntent.getActivity(
-        applicationContext, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT
+    val activityPending = PendingIntent.getActivity(
+        applicationContext,
+        0,
+        activityIntent,
+        PendingIntent.FLAG_UPDATE_CURRENT
     )
+
+    val broadcastIntent = Intent(this, ReminderReceiver::class.java).apply {
+        action = "PAY_REMINDER_CANCELED"
+        putExtra(DetailsActivity.EXTRA_DATA, contentBig)
+    }
+    val reminderPendingIntent = PendingIntent.getBroadcast(applicationContext, 0, broadcastIntent, 0)
 
     val builder =
         NotificationCompat.Builder(this, NOTIFICATION_CHANNEL).apply {
@@ -37,7 +46,8 @@ fun Context.createHomeworkNotification(
             )
             setAutoCancel(true)
             setVibrate(longArrayOf(500, 0, 500, 0))
-            setContentIntent(pendingIntent)
+            setContentIntent(activityPending)
+            addAction(R.drawable.cash_usd_outline, "Cancelar recordatorio", reminderPendingIntent)
             priority = NotificationCompat.PRIORITY_HIGH
         }
 
@@ -81,8 +91,13 @@ fun Context.createNotification(): Boolean {
     return true
 }
 
+fun Context.cancelNotification() {
+    val manager = NotificationManagerCompat.from(this)
+    manager.cancel(NOTIFICATION_ID)
+}
+
 @RequiresApi(Build.VERSION_CODES.O)
-fun createNotificationChannel() =
+private fun createNotificationChannel() =
     NotificationChannel(
         NOTIFICATION_CHANNEL, "Cert App Notification Channel",
         NotificationManager.IMPORTANCE_HIGH
@@ -94,7 +109,7 @@ fun createNotificationChannel() =
     }
 
 @RequiresApi(Build.VERSION_CODES.O)
-fun createHomeworkNotificationChannel() =
+private fun createHomeworkNotificationChannel() =
     NotificationChannel(
         NOTIFICATION_CHANNEL, "Aviso de pagos",
         NotificationManager.IMPORTANCE_HIGH

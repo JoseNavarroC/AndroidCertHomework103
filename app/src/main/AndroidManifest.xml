@@ -21,6 +21,12 @@
             android:launchMode="singleInstance"
             android:theme="@style/AppTheme.NoBar"/>
 
+        <receiver android:name=".ReminderReceiver"  android:exported="true">
+            <intent-filter>
+                <action android:name="PAY_REMINDER_CANCELED"/>
+            </intent-filter>
+        </receiver>
+
     </application>
 
 </manifest>

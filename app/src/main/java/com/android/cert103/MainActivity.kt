@@ -17,14 +17,13 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         btnMainShow?.setOnClickListener {
-//            val request = buildOneTimeWorkerRequest()
-//            WorkManager.getInstance(this).enqueue(request)
-            showNotif()
+            val request = buildPeriodicWorkerRequest()
+            WorkManager.getInstance(this).enqueue(request)
+//            showNotif()
         }
     }
 
     private fun buildOneTimeWorkerRequest(): OneTimeWorkRequest {
-
         val service =
             if (System.currentTimeMillis() % 2 == 0L) getString(R.string.service_electricity)
             else getString(R.string.service_internet)
@@ -60,10 +59,11 @@ class MainActivity : AppCompatActivity() {
 
         val calendar = Calendar.getInstance()
             .apply { set(Calendar.DAY_OF_YEAR, get(Calendar.DAY_OF_YEAR + 5)) }.time
-        val date = DateFormat.getLongDateFormat(this).format(calendar)
+        val dateLong = DateFormat.getLongDateFormat(this).format(calendar)
+        val dateShort = DateFormat.getDateFormat(this).format(calendar)
 
-        val content = getString(R.string.format_content, service, date)
-        val bigContent = getString(R.string.format_content_details, service, date)
+        val content = getString(R.string.format_content, service, dateShort)
+        val bigContent = getString(R.string.format_content_details, service, dateLong)
 
         val data = workDataOf(
             WorkerHomeworkNotification.KEY_CONTENT to content,
@@ -74,8 +74,6 @@ class MainActivity : AppCompatActivity() {
             .setInputData(data)
             .setConstraints(
                 Constraints.Builder()
-                .setRequiresBatteryNotLow(true)
-                .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
             ).build()
     }
